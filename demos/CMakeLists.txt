@@ -36,13 +36,17 @@ macro(CREATE_DEMO _target _sources)
     add_executable(${_target} ${_sources})
     target_link_libraries(${_target}
         freetype-gl
+        glfw
         ${OPENGL_LIBRARY}
-        ${GLFW3_LIBRARY}
+        ${GLFW_LIBRARY}
         ${FREETYPE_LIBRARIES}
         ${GLEW_LIBRARY}
     )
     if(MATH_LIBRARY)
         target_link_libraries(${_target} ${MATH_LIBRARY})
+    endif()
+    if(MATH_LIBRARY)
+        target_link_libraries(${_target} ${GLFW_LIBRARY})
     endif()
 
     if(MSVC AND NOT (MSVC_VERSION LESS 1900))
@@ -59,7 +63,7 @@ if(WIN32 OR WIN64)
 endif()
 
 # Find dependencies
-find_package(glfw3 REQUIRED)
+find_package(glfw3 3.2 REQUIRED)
 find_package(AntTweakBar)
 find_package(FontConfig)
 
