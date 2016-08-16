@@ -1,9 +1,9 @@
-/* ============================================================================
+/* =========================================================================
  * Freetype GL - A C OpenGL Freetype engine
  * Platform:    Any
  * WWW:         https://github.com/rougier/freetype-gl
- * ----------------------------------------------------------------------------
- * Copyright 2011,2012 Nicolas P. Rougier. All rights reserved.
+ * -------------------------------------------------------------------------
+ * Copyright 2011 Nicolas P. Rougier. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -29,29 +29,19 @@
  * The views and conclusions contained in the software and documentation are
  * those of the authors and should not be interpreted as representing official
  * policies, either expressed or implied, of Nicolas P. Rougier.
- * ============================================================================
- */
-#ifndef __OPEN_GL_H__
-#define __OPEN_GL_H__
+ * ========================================================================= */
+uniform mat4 u_model;
+uniform mat4 u_view;
+uniform mat4 u_projection;
+uniform vec4 u_color;
 
-#ifndef FTGL_INCLUDE_NONE
-#if defined(__APPLE__)
-#   include "TargetConditionals.h"
-#   if TARGET_OS_SIMULATOR || TARGET_OS_IPHONE
-#     if defined(FREETYPE_GL_ES_VERSION_3_0)
-#       include <OpenGLES/ES3/gl.h>
-#     else
-#       include <OpenGLES/ES2/gl.h>
-#     endif
-#   else
-#     include <OpenGL/gl.h>
-#   endif
-#elif defined(_WIN32) || defined(_WIN64)
-#  include <GL/glew.h>
-#  include <GL/wglew.h>
-#else
-#  include <GL/glew.h>
-#  include <GL/gl.h>
-#endif
-#endif
-#endif /* OPEN_GL_H */
+attribute vec3 vertex;
+attribute vec2 tex_coord;
+attribute vec4 color;
+
+void main(void)
+{
+    gl_TexCoord[0].xy = tex_coord.xy;
+    gl_FrontColor     = color * u_color;
+    gl_Position       = u_projection*(u_view*(u_model*vec4(vertex,1.0)));
+}

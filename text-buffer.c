@@ -56,9 +56,7 @@ text_buffer_new( size_t depth,
                  const char * frag_filename )
 {
     GLuint program = shader_load( vert_filename, frag_filename );
-
     text_buffer_t * p = text_buffer_new_with_program( depth, program );
-
     return p;
 }
 
@@ -170,17 +168,13 @@ text_buffer_printf( text_buffer_t * self, vec2 *pen, ... )
     va_list args;
 
     if( vertex_buffer_size( self->buffer ) == 0 )
-    {
         self->origin = *pen;
-    }
 
     va_start ( args, pen );
     do {
         markup = va_arg( args, markup_t * );
-        if( markup == NULL )
-        {
+        if( !markup  )
             return;
-        }
         text = va_arg( args, char * );
         text_buffer_add_text( self, pen, markup, text, 0 );
     } while( markup != 0 );
@@ -193,11 +187,9 @@ text_buffer_move_last_line( text_buffer_t * self, float dy )
 {
     size_t i;
     int j;
-    for( i=self->line_start; i < vector_size( self->buffer->items ); ++i )
-    {
+    for( i=self->line_start; i < vector_size( self->buffer->items ); ++i ) {
         ivec4 *item = (ivec4 *) vector_get( self->buffer->items, i);
-        for( j=item->vstart; j<item->vstart+item->vcount; ++j)
-        {
+        for( j=item->vstart; j<item->vstart+item->vcount; ++j) {
             glyph_vertex_t * vertex =
                 (glyph_vertex_t *)  vector_get( self->buffer->vertices, j );
             vertex->y -= dy;

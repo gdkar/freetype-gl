@@ -50,8 +50,7 @@ vertex_attribute_new( GLchar * name,
                       GLsizei stride,
                       GLvoid *pointer )
 {
-    vertex_attribute_t *attribute =
-        (vertex_attribute_t *) malloc (sizeof(vertex_attribute_t));
+    vertex_attribute_t *attribute = malloc (sizeof(*attribute));
 
     assert( size > 0 );
 
@@ -65,19 +64,15 @@ vertex_attribute_new( GLchar * name,
     return attribute;
 }
 
-
-
 // ----------------------------------------------------------------------------
 void
 vertex_attribute_delete( vertex_attribute_t * self )
 {
-    assert( self );
-
-    free( self->name );
-    free( self );
+    if(self) {
+        free( self->name );
+        free( self );
+    }
 }
-
-
 
 // ----------------------------------------------------------------------------
 vertex_attribute_t *
@@ -90,42 +85,30 @@ vertex_attribute_parse( char *format )
     char *name;
     vertex_attribute_t *attr;
     char *p = strchr(format, ':');
-    if( p != NULL)
-    {
+    if( p ) {
         name = strndup(format, p-format);
-        if( *(++p) == '\0' )
-        {
+        if( *(++p) == '\0' ) {
             fprintf( stderr, "No size specified for '%s' attribute\n", name );
             free( name );
             return 0;
         }
         size = *p - '0';
-
-        if( *(++p) == '\0' )
-        {
+        if( *(++p) == '\0' ) {
             fprintf( stderr, "No format specified for '%s' attribute\n", name );
             free( name );
             return 0;
         }
         ctype = *p;
-
-        if( *(++p) != '\0' )
-        {
-            if( *p == 'n' )
-            {
+        if( *(++p) != '\0' ) {
+            if( *p == 'n' ) {
                 normalized = 1;
             }
         }
-
-    }
-    else
-    {
+    } else {
         fprintf(stderr, "Vertex attribute format not understood ('%s')\n", format );
         return 0;
     }
-
-    switch( ctype )
-    {
+    switch( ctype ) {
     case 'b': type = GL_BYTE;           break;
     case 'B': type = GL_UNSIGNED_BYTE;  break;
     case 's': type = GL_SHORT;          break;
@@ -148,17 +131,14 @@ vertex_attribute_parse( char *format )
 void
 vertex_attribute_enable( vertex_attribute_t *attr )
 {
-    if( attr->index == -1 )
-    {
+    if( attr->index == -1 ) {
         GLint program;
         glGetIntegerv( GL_CURRENT_PROGRAM, &program );
-        if( program == 0)
-        {
+        if( !program) {
             return;
         }
         attr->index = glGetAttribLocation( program, attr->name );
-        if( attr->index == -1 )
-        {
+        if( attr->index == -1 ) {
             return;
         }
     }
